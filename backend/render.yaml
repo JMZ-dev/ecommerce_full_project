@@ -19,7 +19,7 @@ services:
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
-        value: ecommerce_teccart
+        value: defaultdb
       - key: DB_SSL
         value: true
       - key: JWT_SECRET

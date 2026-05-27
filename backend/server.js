@@ -8,13 +8,18 @@ const Stripe = require('stripe');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'ecommerce_teccart'
+  database: process.env.DB_NAME || 'ecommerce_teccart',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 });
 const dbp = db.promise();
 
@@ -610,4 +615,9 @@ app.post('/api/payments/stripe/confirm', authRequired, async (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Backend running on ${port}`));
+
+if (require.main === module) {
+  app.listen(port, () => console.log(`Backend running on ${port}`));
+}
+
+module.exports = app;
